@@ -1,6 +1,5 @@
 plugins {
     id("com.android.application")
-//    id("com.google.gms.google-services")
     id("dagger.hilt.android.plugin")
     kotlin("android")
     kotlin("kapt")
@@ -19,10 +18,6 @@ android {
         versionName = Versions.versionName
 
     }
-    /*packagingOptions {
-        exclude("META-INF/proguard/androidx-annotations.pro")
-        exclude("META-INF/androidx.exifinterface_exifinterface.version")
-    }*/
 
     buildTypes {
         getByName("release") {
