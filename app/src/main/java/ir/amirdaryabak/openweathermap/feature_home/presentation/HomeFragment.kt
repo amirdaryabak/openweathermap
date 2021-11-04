@@ -22,6 +22,8 @@ import ir.amirdaryabak.openweathermap.databinding.FragmentHomeBinding
 import ir.amirdaryabak.openweathermap.feature_home.domain.entity.geographic_daily.DailyEntity
 import ir.amirdaryabak.openweathermap.feature_home.presentation.adapter.DailyWeatherAdapter
 import kotlinx.coroutines.flow.collect
+import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -148,8 +150,25 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         }
     }
 
+    private fun getNameOfWeekDay(): MutableList<String> {
+        val list = mutableListOf<String>()
+        val sdf = SimpleDateFormat("EEEE", Locale.getDefault())
+        val calendar = Calendar.getInstance()
+        list.add("Today")
+
+        for (i in 0 until 7) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
+            val day = calendar.time
+            val dayName = sdf.format(day)
+            list.add(dayName)
+        }
+
+        return list
+    }
+
     private fun setupAdapter(content: List<DailyEntity>) {
         dailyWeatherAdapter = DailyWeatherAdapter(
+            weekDaysName = getNameOfWeekDay(),
             clickListener = { item, position ->
 
             },

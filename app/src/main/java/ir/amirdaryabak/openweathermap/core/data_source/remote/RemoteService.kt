@@ -34,6 +34,7 @@ interface RemoteService {
         @Query("lat") lat: String,
         @Query("lon") lon: String,
         @Query("units") units: String = "metric",
+        @Query("exclude") exclude: String = "minutely,hourly",
         @Query("appid") appid: String = Constants.API_KEY,
     ): GeographicDailyDto
 

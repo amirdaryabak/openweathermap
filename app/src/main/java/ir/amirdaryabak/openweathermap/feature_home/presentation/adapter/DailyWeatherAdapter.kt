@@ -9,6 +9,7 @@ import ir.amirdaryabak.openweathermap.databinding.WeekDayItemBinding
 import ir.amirdaryabak.openweathermap.feature_home.domain.entity.geographic_daily.DailyEntity
 
 class DailyWeatherAdapter(
+    private val weekDaysName: List<String>,
     private val clickListener: (DailyEntity, Int) -> Unit,
 ) : ListAdapter<DailyEntity, DailyWeatherAdapter.MyViewHolder>(DiffCallback()) {
 
@@ -38,9 +39,10 @@ class DailyWeatherAdapter(
         fun bindData(dailyEntity: DailyEntity) {
             binding.apply {
                 dailyEntity.let {
-                    dayName.text = "${it.weatherList[0].main}"
+                    dayName.text = "${weekDaysName[adapterPosition]}"
                     rainPercentage.text = "${it.rain.toInt()}%"
-                    temp.text = "${it.temp.day.toInt()}°C"
+                    tempMin.text = "${it.temp.min.toInt()}°C"
+                    tempMax.text = "${it.temp.max.toInt()}°C/"
                 }
                 root.setOnClickListener {
                     clickListener.invoke(dailyEntity, adapterPosition)

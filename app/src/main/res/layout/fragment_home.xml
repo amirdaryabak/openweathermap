@@ -69,17 +69,28 @@
         app:layout_constraintTop_toBottomOf="@+id/cityName"
         tools:text="WeatherMain" />
 
+    <TextView
+        android:id="@+id/dummyTxt"
+        style="@style/MyTextQuickSandLight.Big"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weatherMain"
+        android:text="Next Days" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvWeekDays"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weatherMain"
+        app:layout_constraintTop_toBottomOf="@+id/dummyTxt"
         tools:listitem="@layout/week_day_item" />
 
 

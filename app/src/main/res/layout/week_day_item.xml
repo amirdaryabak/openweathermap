@@ -56,13 +56,23 @@
             tools:text="10%" />
 
         <TextView
-            android:id="@+id/temp"
+            android:id="@+id/tempMin"
             style="@style/MyTextQuickSandLight"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/dayName"
+            tools:text="Temp&#176;" />
+
+        <TextView
+            android:id="@+id/tempMax"
+            style="@style/MyTextQuickSandLight"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toStartOf="@+id/tempMin"
             app:layout_constraintTop_toTopOf="@+id/dayName"
             tools:text="Temp&#176;" />
 
