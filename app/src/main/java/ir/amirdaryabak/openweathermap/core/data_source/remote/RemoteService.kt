@@ -5,6 +5,7 @@ import ir.amirdaryabak.openweathermap.feature_home.data.remote.dto.geographic.Ge
 import ir.amirdaryabak.openweathermap.feature_home.data.remote.dto.geographic_daily.GeographicDailyDto
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 
 interface RemoteService {
@@ -13,27 +14,27 @@ interface RemoteService {
         const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
     }
 
-    @GET("weather?lat={lat}&lon={lon}&units={units}&appid={key}")
+    @GET("weather")
     suspend fun getGeographicByCoordinates(
-        @Path("lat") lat: String,
-        @Path("lon") lon: String,
-        @Path("units") units: String = "metric",
-        @Path("key") key: String = Constants.API_KEY,
+        @Query("lat") lat: String,
+        @Query("lon") lon: String,
+        @Query("units") units: String = "metric",
+        @Query("appid") appid: String = Constants.API_KEY,
     ): GeographicDto
 
-    @GET("weather?q={cityName}&units={units}&appid={key}")
+    @GET("weather")
     suspend fun getGeographicByCityName(
-        @Path("cityName") cityName: String,
-        @Path("units") units: String = "metric",
-        @Path("key") key: String = Constants.API_KEY,
+        @Query("cityName") cityName: String,
+        @Query("units") units: String = "metric",
+        @Query("appid") appid: String = Constants.API_KEY,
     ): GeographicDto
 
-    @GET("onecall?lat={lat}&lon={lon}&units={units}&appid={key}")
+    @GET("onecall")
     suspend fun getGeographicDailyByCoordinates(
-        @Path("lat") lat: String,
-        @Path("lon") lon: String,
-        @Path("units") units: String = "metric",
-        @Path("key") key: String = Constants.API_KEY,
+        @Query("lat") lat: String,
+        @Query("lon") lon: String,
+        @Query("units") units: String = "metric",
+        @Query("appid") appid: String = Constants.API_KEY,
     ): GeographicDailyDto
 
 }

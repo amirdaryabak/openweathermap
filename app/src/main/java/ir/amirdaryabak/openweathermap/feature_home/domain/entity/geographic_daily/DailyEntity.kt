@@ -7,4 +7,5 @@ data class DailyEntity(
     val humidity: Int,
     val wind_speed: Double,
     val weatherList: List<WeatherDto>,
+    val rain: Double
 )

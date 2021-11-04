@@ -20,7 +20,7 @@ data class DailyDto(
     val wind_gust: Double,
     val weather: List<WeatherDto>,
     val clouds: Int,
-    val pop: Int,
+    val pop: Double,
     val rain: Double,
     val uvi: Double
 )
@@ -30,6 +30,7 @@ fun DailyDto.toDailyEntity(): DailyEntity {
         temp = temp.toTempEntity(),
         humidity = humidity,
         wind_speed = wind_speed,
-        weatherList = weather
+        weatherList = weather,
+        rain = rain
     )
 }

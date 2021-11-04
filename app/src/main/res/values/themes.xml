@@ -13,4 +13,16 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <!--region <<<<<<<<<< TEXTS >>>>>>>>>>-->
+
+    <style name="MyTextQuickSandLight" parent="Theme.Openweathermap">
+        <item name="android:fontFamily">@font/quicksand_light</item>
+    </style>
+    <style name="MyTextQuickSandLight.Big" parent="MyTextQuickSandLight">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <!--endregion-->
+
 </resources>
