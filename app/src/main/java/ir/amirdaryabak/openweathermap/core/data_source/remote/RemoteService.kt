@@ -24,7 +24,7 @@ interface RemoteService {
 
     @GET("weather")
     suspend fun getGeographicByCityName(
-        @Query("cityName") cityName: String,
+        @Query("q") q: String,
         @Query("units") units: String = "metric",
         @Query("appid") appid: String = Constants.API_KEY,
     ): GeographicDto

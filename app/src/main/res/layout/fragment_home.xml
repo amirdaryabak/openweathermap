@@ -6,35 +6,114 @@
     android:layout_height="match_parent"
     tools:context=".feature_home.presentation.HomeFragment">
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilName"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        app:errorIconDrawable="@null"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tieName"
-            style="@style/MyTextQuickSandLight"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@android:color/transparent"
-            android:gravity="center"
-            android:hint="Search ..."
-            android:imeOptions="actionNext"
-            android:inputType="text" />
+            android:layout_height="match_parent">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilName"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:errorIconDrawable="@null"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tieName"
+                    style="@style/MyTextQuickSandLight"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@android:color/transparent"
+                    android:gravity="center"
+                    android:hint="Search ..."
+                    android:imeOptions="actionDone"
+                    android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/cityName"
+                style="@style/MyTextQuickSandLight.Big"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tilName"
+                tools:text="City Name" />
+
+            <TextView
+                android:id="@+id/temp"
+                style="@style/MyTextQuickSandLight.Big"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textAlignment="center"
+                app:layout_constraintStart_toStartOf="@+id/cityName"
+                app:layout_constraintTop_toBottomOf="@+id/cityName"
+                tools:text="Temp&#176;" />
+
+            <TextView
+                android:id="@+id/weatherMain"
+                style="@style/MyTextQuickSandLight.Big"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="@+id/cityName"
+                app:layout_constraintTop_toBottomOf="@+id/cityName"
+                tools:text="WeatherMain" />
+
+            <TextView
+                android:id="@+id/dummyTxt"
+                style="@style/MyTextQuickSandLight.Big"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Next Days"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/weatherMain" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvWeekDays"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dummyTxt"
+                tools:listitem="@layout/week_day_item" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <View
+        android:id="@+id/loadingView"
+        style="@style/Card"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
     <TextView
-        android:id="@+id/cityName"
+        android:id="@+id/errorTxt"
         style="@style/MyTextQuickSandLight.Big"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -42,56 +121,22 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilName"
-        tools:text="City Name" />
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/loadingView"
+        app:layout_constraintEnd_toEndOf="@+id/loadingView"
+        app:layout_constraintStart_toStartOf="@+id/loadingView"
+        app:layout_constraintTop_toTopOf="@+id/loadingView"
+        tools:text="Next Days" />
 
-    <TextView
-        android:id="@+id/temp"
-        style="@style/MyTextQuickSandLight.Big"
-        android:layout_width="0dp"
+    <ProgressBar
+        android:id="@+id/loadingProgress"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textAlignment="center"
-        app:layout_constraintStart_toStartOf="@+id/cityName"
-        app:layout_constraintTop_toBottomOf="@+id/cityName"
-        tools:text="Temp&#176;" />
-
-    <TextView
-        android:id="@+id/weatherMain"
-        style="@style/MyTextQuickSandLight.Big"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="@+id/cityName"
-        app:layout_constraintTop_toBottomOf="@+id/cityName"
-        tools:text="WeatherMain" />
-
-    <TextView
-        android:id="@+id/dummyTxt"
-        style="@style/MyTextQuickSandLight.Big"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weatherMain"
-        android:text="Next Days" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvWeekDays"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dummyTxt"
-        tools:listitem="@layout/week_day_item" />
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/loadingView"
+        app:layout_constraintEnd_toEndOf="@+id/loadingView"
+        app:layout_constraintStart_toStartOf="@+id/loadingView"
+        app:layout_constraintTop_toTopOf="@+id/loadingView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

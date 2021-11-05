@@ -18,17 +18,21 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     sealed class HandleEvent {
-        object ShowWeatherByCoordinatesLoading : HandleEvent()
+        object ShowLoading : HandleEvent()
         data class GetWeatherByCoordinates(val lat: String, val lon: String) : HandleEvent()
         data class OnGetWeatherByCoordinatesSuccess(val geographicEntity: GeographicEntity?) :
             HandleEvent()
         data class OnGetWeatherByCoordinatesError(val errorMessage: String?) : HandleEvent()
 
-        object ShowWeatherDailyLoading : HandleEvent()
         data class GetWeatherDaily(val lat: String, val lon: String) : HandleEvent()
         data class OnGetWeatherDailySuccess(val geographicDailyEntity: GeographicDailyEntity?) :
             HandleEvent()
         data class OnGetWeatherDailyError(val errorMessage: String?) : HandleEvent()
+
+        data class GetWeatherByCityName(val cityName: String) : HandleEvent()
+        data class OnGetWeatherByCityNameSuccess(val geographicEntity: GeographicEntity?) :
+            HandleEvent()
+        data class OnGetWeatherByCityNameError(val errorMessage: String?) : HandleEvent()
     }
 
     private val _tasksEvent = MutableSharedFlow<HandleEvent>()
@@ -38,8 +42,8 @@ class HomeViewModel @Inject constructor(
     fun onEvent(event: HandleEvent) =
         viewModelScope.launch() {
             when (event) {
-                is HandleEvent.ShowWeatherByCoordinatesLoading -> {
-                    _tasksEvent.emit(HandleEvent.ShowWeatherByCoordinatesLoading)
+                is HandleEvent.ShowLoading -> {
+                    _tasksEvent.emit(HandleEvent.ShowLoading)
                 }
                 is HandleEvent.GetWeatherByCoordinates -> getWeatherByCoordinates(
                     event.lat,
@@ -56,8 +60,8 @@ class HomeViewModel @Inject constructor(
                     )
                 }
 
-                is HandleEvent.ShowWeatherDailyLoading -> {
-                    _tasksEvent.emit(HandleEvent.ShowWeatherDailyLoading)
+                is HandleEvent.ShowLoading -> {
+                    _tasksEvent.emit(HandleEvent.ShowLoading)
                 }
                 is HandleEvent.GetWeatherDaily -> getWeatherDaily(
                     event.lat,
@@ -73,6 +77,18 @@ class HomeViewModel @Inject constructor(
                         HandleEvent.OnGetWeatherDailyError(event.errorMessage)
                     )
                 }
+
+                is HandleEvent.GetWeatherByCityName -> getWeatherByCityName(event.cityName,)
+                is HandleEvent.OnGetWeatherByCityNameSuccess -> {
+                    _tasksEvent.emit(
+                        HandleEvent.OnGetWeatherByCityNameSuccess(event.geographicEntity)
+                    )
+                }
+                is HandleEvent.OnGetWeatherByCityNameError -> {
+                    _tasksEvent.emit(
+                        HandleEvent.OnGetWeatherByCityNameError(event.errorMessage)
+                    )
+                }
             }.exhaustive
         }
 
@@ -86,7 +102,7 @@ class HomeViewModel @Inject constructor(
                     onEvent(HandleEvent.OnGetWeatherByCoordinatesError(result.message))
                 }
                 is Resource.Loading -> {
-                    onEvent(HandleEvent.ShowWeatherByCoordinatesLoading)
+                    onEvent(HandleEvent.ShowLoading)
                 }
             }
         }.launchIn(viewModelScope)
@@ -102,7 +118,23 @@ class HomeViewModel @Inject constructor(
                     onEvent(HandleEvent.OnGetWeatherDailyError(result.message))
                 }
                 is Resource.Loading -> {
-                    onEvent(HandleEvent.ShowWeatherDailyLoading)
+                    onEvent(HandleEvent.ShowLoading)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getWeatherByCityName(cityName: String) {
+        homeUseCases.getWeatherByCityNameUseCase(cityName).onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    onEvent(HandleEvent.OnGetWeatherByCityNameSuccess(result.data))
+                }
+                is Resource.Error -> {
+                    onEvent(HandleEvent.OnGetWeatherByCityNameError(result.message))
+                }
+                is Resource.Loading -> {
+                    onEvent(HandleEvent.ShowLoading)
                 }
             }
         }.launchIn(viewModelScope)

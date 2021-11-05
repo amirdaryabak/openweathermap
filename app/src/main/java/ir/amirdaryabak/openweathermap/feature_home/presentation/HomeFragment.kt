@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,12 +19,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import ir.amirdaryabak.openweathermap.R
 import ir.amirdaryabak.openweathermap.core.BaseFragment
 import ir.amirdaryabak.openweathermap.core.utils.exhaustive
+import ir.amirdaryabak.openweathermap.core.utils.hideKeyboard
 import ir.amirdaryabak.openweathermap.databinding.FragmentHomeBinding
 import ir.amirdaryabak.openweathermap.feature_home.domain.entity.geographic_daily.DailyEntity
 import ir.amirdaryabak.openweathermap.feature_home.presentation.adapter.DailyWeatherAdapter
 import kotlinx.coroutines.flow.collect
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -92,14 +93,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                     permissions[Manifest.permission.ACCESS_COARSE_LOCATION]
                         ?: accessCoarseLocationPermissionGranted
                 if (fineLocationPermissionGranted && accessCoarseLocationPermissionGranted) {
-                    try {
-                        fusedLocationProviderClient.requestLocationUpdates(
-                            locationRequest, locationCallback, Looper.getMainLooper()
-                        )
-                    } catch (unlikely: SecurityException) {
-                        // TODO
-//                        Log.e(TAG, "Lost location permissions. Couldn't remove updates. $unlikely")
-                    }
+                    requestLocation()
                 } else {
                     updateOrRequestPermissions()
                 }
@@ -108,18 +102,32 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         updateOrRequestPermissions()
 
         binding.apply {
+            tieName.setOnEditorActionListener { _, _, _ ->
+                viewModel.onEvent(
+                    HomeViewModel.HandleEvent.GetWeatherByCityName(
+                        tieName.text.toString()
+                    )
+                )
+                requireActivity().hideKeyboard(tieName)
+                true
+            }
 
+            swipeRefreshLayout.setOnRefreshListener {
+                swipeRefreshLayout.isRefreshing = false
+                requestLocation()
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             binding.apply {
                 viewModel.tasksEvent.collect { event ->
                     when (event) {
-                        is HomeViewModel.HandleEvent.ShowWeatherByCoordinatesLoading -> {
-
+                        is HomeViewModel.HandleEvent.ShowLoading -> {
+                            toggleLoading(true)
                         }
                         is HomeViewModel.HandleEvent.GetWeatherByCoordinates -> Unit
                         is HomeViewModel.HandleEvent.OnGetWeatherByCoordinatesSuccess -> {
+                            toggleLoading(false)
                             event.geographicEntity?.let { content ->
                                 cityName.text = "${content.name}, ${content.sys.country}"
                                 temp.text = "${content.main.temp.toInt()}°C"
@@ -128,25 +136,57 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                         }
 
                         is HomeViewModel.HandleEvent.OnGetWeatherByCoordinatesError -> {
-
+                            showErrorView(event.errorMessage)
                         }
-                        is HomeViewModel.HandleEvent.ShowWeatherDailyLoading -> {
-
-                        }
-                        is HomeViewModel.HandleEvent.GetWeatherDaily -> {
-
-                        }
+                        is HomeViewModel.HandleEvent.GetWeatherDaily -> Unit
                         is HomeViewModel.HandleEvent.OnGetWeatherDailySuccess -> {
+                            toggleLoading(false)
                             event.geographicDailyEntity?.let { content ->
                                 setupRecyclerView(content.dailyList)
                             }
                         }
                         is HomeViewModel.HandleEvent.OnGetWeatherDailyError -> {
+                            showErrorView(event.errorMessage)
+                        }
 
+                        is HomeViewModel.HandleEvent.GetWeatherByCityName -> Unit
+                        is HomeViewModel.HandleEvent.OnGetWeatherByCityNameSuccess -> {
+                            toggleLoading(false)
+                            event.geographicEntity?.let { content ->
+                                cityName.text = "${content.name}, ${content.sys.country}"
+                                temp.text = "${content.main.temp.toInt()}°C"
+                                weatherMain.text = content.weatherList[0].main
+
+                                viewModel.onEvent(
+                                    HomeViewModel.HandleEvent.GetWeatherDaily(
+                                        content.coordinates.lat.toString(), content.coordinates.lat.toString()
+                                    )
+                                )
+                            }
+                        }
+                        is HomeViewModel.HandleEvent.OnGetWeatherByCityNameError -> {
+                            showErrorView(event.errorMessage)
                         }
                     }.exhaustive
                 }
             }
+        }
+    }
+
+    private fun showErrorView(errorMessage: String?) {
+        binding.apply {
+            loadingView.isVisible = true
+            errorTxt.isVisible = true
+            loadingProgress.isVisible = false
+            errorTxt.text = errorMessage
+        }
+    }
+
+    private fun toggleLoading(bool: Boolean) {
+        binding.apply {
+            loadingView.isVisible = bool
+            loadingProgress.isVisible = bool
+            errorTxt.isVisible = false
         }
     }
 
@@ -209,14 +249,16 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
             permissionsLauncher.launch(permissionsToRequest.toTypedArray())
         }
         if (fineLocationPermissionGranted && accessCoarseLocationPermissionGranted) {
-            try {
-                fusedLocationProviderClient.requestLocationUpdates(
-                    locationRequest, locationCallback, Looper.getMainLooper()
-                )
-            } catch (unlikely: SecurityException) {
-                // TODO
-//                Log.e(TAG, "Lost location permissions. Couldn't remove updates. $unlikely")
-            }
+            requestLocation()
+        }
+    }
+
+    private fun requestLocation() {
+        try {
+            fusedLocationProviderClient.requestLocationUpdates(
+                locationRequest, locationCallback, Looper.getMainLooper()
+            )
+        } catch (unlikely: SecurityException) {
         }
     }
 
