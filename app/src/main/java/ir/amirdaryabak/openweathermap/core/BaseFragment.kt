@@ -4,12 +4,14 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import ir.amirdaryabak.openweathermap.R
+import ir.amirdaryabak.openweathermap.core.data_source.remote.ExceptionParser
+import ir.amirdaryabak.openweathermap.core.utils.Constants
 
 abstract class BaseFragment(layoutId: Int): Fragment(layoutId) {
 
     fun showSnackbar(
-        text: String = "خطا در برقراری ارتباط",
-        actionText: String = "تلاش مجدد",
+        text: String = ExceptionParser.NO_INTERNET_CONNECTION,
+        actionText: String = Constants.TRY_AGAIN,
         duration: Int = Snackbar.LENGTH_LONG,
         callFunction: () -> Unit = {}
     ) {

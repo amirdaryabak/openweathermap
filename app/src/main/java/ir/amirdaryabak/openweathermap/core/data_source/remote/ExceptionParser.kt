@@ -12,7 +12,7 @@ import java.lang.reflect.Type
 
 object ExceptionParser {
 
-    private const val NO_INTERNET_CONNECTION = "No Internet"
+    const val NO_INTERNET_CONNECTION = "No Internet (Swipe to refresh)"
     private const val CODE_NO_ERROR = 0
 
     private val gson = Gson()

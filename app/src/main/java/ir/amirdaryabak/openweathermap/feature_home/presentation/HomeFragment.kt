@@ -81,6 +81,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                         currentLocation.latitude.toString(), currentLocation.longitude.toString()
                     )
                 )
+                fusedLocationProviderClient.removeLocationUpdates(locationCallback)
             }
         }
 
@@ -108,6 +109,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                         tieName.text.toString()
                     )
                 )
+                tieName.setText("")
                 requireActivity().hideKeyboard(tieName)
                 true
             }

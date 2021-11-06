@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
                         R.color.purple_700
                     )
                 )
-                txtIsNetworkAvailable.text = "اینترنت قطع است"
+                txtIsNetworkAvailable.text = "No Internet (Swipe to refresh)"
                 isNetworkAvailable.visibility = View.VISIBLE
                 txtIsNetworkAvailable.visibility = View.VISIBLE
             }
