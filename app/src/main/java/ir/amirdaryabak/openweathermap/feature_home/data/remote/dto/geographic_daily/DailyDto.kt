@@ -1,6 +1,7 @@
 package ir.amirdaryabak.openweathermap.feature_home.data.remote.dto.geographic_daily
 
 import ir.amirdaryabak.openweathermap.feature_home.data.remote.dto.geographic.WeatherDto
+import ir.amirdaryabak.openweathermap.feature_home.data.remote.dto.geographic.toWeatherEntity
 import ir.amirdaryabak.openweathermap.feature_home.domain.entity.geographic_daily.DailyEntity
 
 data class DailyDto(
@@ -30,7 +31,7 @@ fun DailyDto.toDailyEntity(): DailyEntity {
         temp = temp.toTempEntity(),
         humidity = humidity,
         wind_speed = wind_speed,
-        weatherList = weather,
+        weatherList = weather.map { it.toWeatherEntity() },
         rain = rain
     )
 }

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".feature_weather_more_detail.presentation.WeatherDetailFragment">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/cityName"
+                style="@style/MyTextQuickSandLight.Big"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="City Name" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.50" />
+
+            <TextView
+                android:id="@+id/temp"
+                style="@style/MyTextQuickSandLight"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:textAlignment="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cityName"
+                tools:text="temp" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_umbrella"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintTop_toTopOf="@+id/temp" />
+
+            <TextView
+                android:id="@+id/rainPercentage"
+                style="@style/MyTextQuickSandLight"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView"
+                app:layout_constraintStart_toStartOf="@+id/guideline2"
+                app:layout_constraintTop_toTopOf="@+id/imageView"
+                tools:text="10%" />
+
+            <TextView
+                android:id="@+id/tempMin"
+                style="@style/MyTextQuickSandLight"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/temp"
+                tools:text="Temp&#176;" />
+
+            <TextView
+                android:id="@+id/tempMax"
+                style="@style/MyTextQuickSandLight"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toStartOf="@+id/tempMin"
+                app:layout_constraintTop_toTopOf="@+id/temp"
+                tools:text="Temp&#176;" />
+
+            <TextView
+                android:id="@+id/dummyTxtHumidity"
+                style="@style/MyTextQuickSandLight"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/temp"
+                tools:text="Humidity" />
+
+            <TextView
+                android:id="@+id/humidity"
+                style="@style/MyTextQuickSandLight"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="Humidity:"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toStartOf="@+id/dummyTxtHumidity"
+                app:layout_constraintTop_toTopOf="@+id/dummyTxtHumidity" />
+
+            <TextView
+                android:id="@+id/dummyTxtWindSpeed"
+                style="@style/MyTextQuickSandLight"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="@+id/dummyTxtHumidity"
+                app:layout_constraintTop_toBottomOf="@+id/dummyTxtHumidity"
+                tools:text="WindSpeed" />
+
+            <TextView
+                android:id="@+id/windSpeed"
+                style="@style/MyTextQuickSandLight"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="WindSpeed:"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toStartOf="@+id/dummyTxtWindSpeed"
+                app:layout_constraintTop_toTopOf="@+id/dummyTxtWindSpeed" />
+
+            <View
+                android:id="@+id/loadingView"
+                style="@style/Card"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/errorTxt"
+                style="@style/MyTextQuickSandLight.Big"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:textAlignment="center"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/loadingView"
+                app:layout_constraintEnd_toEndOf="@+id/loadingView"
+                app:layout_constraintStart_toStartOf="@+id/loadingView"
+                app:layout_constraintTop_toTopOf="@+id/loadingView"
+                tools:text="Next Days" />
+
+            <ProgressBar
+                android:id="@+id/loadingProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/loadingView"
+                app:layout_constraintEnd_toEndOf="@+id/loadingView"
+                app:layout_constraintStart_toStartOf="@+id/loadingView"
+                app:layout_constraintTop_toTopOf="@+id/loadingView" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

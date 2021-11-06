@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,6 +21,7 @@ import ir.amirdaryabak.openweathermap.R
 import ir.amirdaryabak.openweathermap.core.BaseFragment
 import ir.amirdaryabak.openweathermap.core.utils.exhaustive
 import ir.amirdaryabak.openweathermap.core.utils.hideKeyboard
+import ir.amirdaryabak.openweathermap.core.utils.navigateSafely
 import ir.amirdaryabak.openweathermap.databinding.FragmentHomeBinding
 import ir.amirdaryabak.openweathermap.feature_home.domain.entity.geographic_daily.DailyEntity
 import ir.amirdaryabak.openweathermap.feature_home.presentation.adapter.DailyWeatherAdapter
@@ -212,7 +214,12 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         dailyWeatherAdapter = DailyWeatherAdapter(
             weekDaysName = getNameOfWeekDay(),
             clickListener = { item, position ->
-
+                findNavController().navigateSafely(
+                    resId = R.id.action_homeFragment_to_weatherDetailFragment,
+                    args = Bundle().apply {
+                        putSerializable("day", item)
+                    }
+                )
             },
         )
         dailyWeatherAdapter.submitList(content)

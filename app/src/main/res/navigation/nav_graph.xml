@@ -10,7 +10,20 @@
         android:id="@+id/homeFragment"
         android:name="ir.amirdaryabak.openweathermap.feature_home.presentation.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_weatherDetailFragment"
+            app:destination="@id/weatherDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/weatherDetailFragment"
+        android:name="ir.amirdaryabak.openweathermap.feature_weather_more_detail.presentation.WeatherDetailFragment"
+        android:label="fragment_weather_details"
+        tools:layout="@layout/fragment_weather_details" >
+        <argument
+            android:name="day"
+            app:argType="ir.amirdaryabak.openweathermap.feature_home.domain.entity.geographic_daily.DailyEntity" />
+    </fragment>
 
 
 </navigation>
