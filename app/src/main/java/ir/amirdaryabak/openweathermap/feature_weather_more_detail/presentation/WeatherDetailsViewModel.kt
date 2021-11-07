@@ -16,11 +16,7 @@ import javax.inject.Inject
 class WeatherDetailsViewModel @Inject constructor() : ViewModel() {
 
     sealed class HandleEvent {
-        object ShowLoading : HandleEvent()
-        data class GetWeatherByCoordinates(val lat: String, val lon: String) : HandleEvent()
-        data class OnGetWeatherByCoordinatesSuccess(val geographicEntity: GeographicEntity?) :
-            HandleEvent()
-        data class OnGetWeatherByCoordinatesError(val errorMessage: String?) : HandleEvent()
+
     }
 
     private val _tasksEvent = MutableSharedFlow<HandleEvent>()
@@ -29,12 +25,7 @@ class WeatherDetailsViewModel @Inject constructor() : ViewModel() {
 
     fun onEvent(event: HandleEvent) =
         viewModelScope.launch() {
-            when (event) {
-                is HandleEvent.GetWeatherByCoordinates -> TODO()
-                is HandleEvent.OnGetWeatherByCoordinatesError -> TODO()
-                is HandleEvent.OnGetWeatherByCoordinatesSuccess -> TODO()
-                HandleEvent.ShowLoading -> TODO()
-            }.exhaustive
+
         }
 
 }

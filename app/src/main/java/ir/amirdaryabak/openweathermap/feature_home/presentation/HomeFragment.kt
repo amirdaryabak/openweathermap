@@ -23,6 +23,7 @@ import ir.amirdaryabak.openweathermap.core.utils.exhaustive
 import ir.amirdaryabak.openweathermap.core.utils.hideKeyboard
 import ir.amirdaryabak.openweathermap.core.utils.navigateSafely
 import ir.amirdaryabak.openweathermap.databinding.FragmentHomeBinding
+import ir.amirdaryabak.openweathermap.feature_home.domain.entity.geographic.GeographicEntity
 import ir.amirdaryabak.openweathermap.feature_home.domain.entity.geographic_daily.DailyEntity
 import ir.amirdaryabak.openweathermap.feature_home.presentation.adapter.DailyWeatherAdapter
 import kotlinx.coroutines.flow.collect
@@ -34,6 +35,9 @@ import java.util.concurrent.TimeUnit
 @AndroidEntryPoint
 class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
+    private var isFirstTime = true
+    private var geographicEntity: GeographicEntity? = null
+    private var dailyList: List<DailyEntity>? = null
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModels<HomeViewModel>()
@@ -59,6 +63,88 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initializeValues()
+        updateOrRequestPermissions()
+        listenToEvents()
+
+        binding.apply {
+            tieName.setOnEditorActionListener { _, _, _ ->
+                viewModel.onEvent(
+                    HomeViewModel.HandleEvent.GetWeatherByCityName(
+                        tieName.text.toString()
+                    )
+                )
+                tieName.setText("")
+                requireActivity().hideKeyboard(tieName)
+                true
+            }
+
+            swipeRefreshLayout.setOnRefreshListener {
+                swipeRefreshLayout.isRefreshing = false
+                requestLocation()
+            }
+        }
+
+    }
+
+    private fun listenToEvents() {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            binding.apply {
+                viewModel.tasksEvent.collect { event ->
+                    when (event) {
+                        is HomeViewModel.HandleEvent.ShowLoading -> {
+                            toggleLoading(true)
+                        }
+                        is HomeViewModel.HandleEvent.GetWeatherByCoordinates -> Unit
+                        is HomeViewModel.HandleEvent.OnGetWeatherByCoordinatesSuccess -> {
+                            toggleLoading(false)
+                            event.geographicEntity?.let { content ->
+                                geographicEntity = content
+                                setValuesToViews(content)
+                            }
+                        }
+
+                        is HomeViewModel.HandleEvent.OnGetWeatherByCoordinatesError -> {
+                            showErrorView(event.errorMessage)
+                        }
+                        is HomeViewModel.HandleEvent.GetWeatherDaily -> Unit
+                        is HomeViewModel.HandleEvent.OnGetWeatherDailySuccess -> {
+                            toggleLoading(false)
+                            event.geographicDailyEntity?.let { content ->
+                                dailyList = content.dailyList
+                                setupRecyclerView(content.dailyList)
+                            }
+                        }
+                        is HomeViewModel.HandleEvent.OnGetWeatherDailyError -> {
+                            showErrorView(event.errorMessage)
+                        }
+
+                        is HomeViewModel.HandleEvent.GetWeatherByCityName -> Unit
+                        is HomeViewModel.HandleEvent.OnGetWeatherByCityNameSuccess -> {
+                            toggleLoading(false)
+                            event.geographicEntity?.let { content ->
+                                geographicEntity = content
+                                setValuesToViews(content)
+                                viewModel.onEvent(
+                                    HomeViewModel.HandleEvent.GetWeatherDaily(
+                                        content.coordinates.lat.toString(),
+                                        content.coordinates.lat.toString()
+                                    )
+                                )
+                                Unit
+                            }
+                        }
+                        is HomeViewModel.HandleEvent.OnGetWeatherByCityNameError -> {
+                            showErrorView(event.errorMessage)
+                        }
+                    }.exhaustive
+                }
+            }
+        }
+    }
+
+    private fun initializeValues() {
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
 
@@ -101,79 +187,13 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                     updateOrRequestPermissions()
                 }
             }
+    }
 
-        updateOrRequestPermissions()
-
+    private fun setValuesToViews(content: GeographicEntity) {
         binding.apply {
-            tieName.setOnEditorActionListener { _, _, _ ->
-                viewModel.onEvent(
-                    HomeViewModel.HandleEvent.GetWeatherByCityName(
-                        tieName.text.toString()
-                    )
-                )
-                tieName.setText("")
-                requireActivity().hideKeyboard(tieName)
-                true
-            }
-
-            swipeRefreshLayout.setOnRefreshListener {
-                swipeRefreshLayout.isRefreshing = false
-                requestLocation()
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            binding.apply {
-                viewModel.tasksEvent.collect { event ->
-                    when (event) {
-                        is HomeViewModel.HandleEvent.ShowLoading -> {
-                            toggleLoading(true)
-                        }
-                        is HomeViewModel.HandleEvent.GetWeatherByCoordinates -> Unit
-                        is HomeViewModel.HandleEvent.OnGetWeatherByCoordinatesSuccess -> {
-                            toggleLoading(false)
-                            event.geographicEntity?.let { content ->
-                                cityName.text = "${content.name}, ${content.sys.country}"
-                                temp.text = "${content.main.temp.toInt()}°C"
-                                weatherMain.text = content.weatherList[0].main
-                            }
-                        }
-
-                        is HomeViewModel.HandleEvent.OnGetWeatherByCoordinatesError -> {
-                            showErrorView(event.errorMessage)
-                        }
-                        is HomeViewModel.HandleEvent.GetWeatherDaily -> Unit
-                        is HomeViewModel.HandleEvent.OnGetWeatherDailySuccess -> {
-                            toggleLoading(false)
-                            event.geographicDailyEntity?.let { content ->
-                                setupRecyclerView(content.dailyList)
-                            }
-                        }
-                        is HomeViewModel.HandleEvent.OnGetWeatherDailyError -> {
-                            showErrorView(event.errorMessage)
-                        }
-
-                        is HomeViewModel.HandleEvent.GetWeatherByCityName -> Unit
-                        is HomeViewModel.HandleEvent.OnGetWeatherByCityNameSuccess -> {
-                            toggleLoading(false)
-                            event.geographicEntity?.let { content ->
-                                cityName.text = "${content.name}, ${content.sys.country}"
-                                temp.text = "${content.main.temp.toInt()}°C"
-                                weatherMain.text = content.weatherList[0].main
-
-                                viewModel.onEvent(
-                                    HomeViewModel.HandleEvent.GetWeatherDaily(
-                                        content.coordinates.lat.toString(), content.coordinates.lat.toString()
-                                    )
-                                )
-                            }
-                        }
-                        is HomeViewModel.HandleEvent.OnGetWeatherByCityNameError -> {
-                            showErrorView(event.errorMessage)
-                        }
-                    }.exhaustive
-                }
-            }
+            cityName.text = "${content.name}, ${content.sys.country}"
+            temp.text = "${content.main.temp.toInt()}°C"
+            weatherMain.text = content.weatherList[0].main
         }
     }
 
@@ -213,11 +233,12 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
     private fun setupAdapter(content: List<DailyEntity>) {
         dailyWeatherAdapter = DailyWeatherAdapter(
             weekDaysName = getNameOfWeekDay(),
-            clickListener = { item, position ->
+            clickListener = { item, name ->
                 findNavController().navigateSafely(
                     resId = R.id.action_homeFragment_to_weatherDetailFragment,
                     args = Bundle().apply {
                         putSerializable("day", item)
+                        putString("dayName", name)
                     }
                 )
             },
@@ -258,7 +279,15 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
             permissionsLauncher.launch(permissionsToRequest.toTypedArray())
         }
         if (fineLocationPermissionGranted && accessCoarseLocationPermissionGranted) {
-            requestLocation()
+            if (isFirstTime) {
+                requestLocation()
+                isFirstTime = false
+            } else {
+                geographicEntity?.let {
+                    setValuesToViews(it)
+                }
+                setupRecyclerView(dailyList ?: emptyList())
+            }
         }
     }
 

@@ -23,6 +23,9 @@
         <argument
             android:name="day"
             app:argType="ir.amirdaryabak.openweathermap.feature_home.domain.entity.geographic_daily.DailyEntity" />
+        <argument
+            android:name="dayName"
+            app:argType="string" />
     </fragment>
 
 

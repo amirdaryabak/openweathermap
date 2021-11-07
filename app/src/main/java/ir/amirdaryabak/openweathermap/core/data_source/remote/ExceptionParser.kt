@@ -27,7 +27,7 @@ object ExceptionParser {
                 val errorJson = extractMessageFromHttpException(t)
                 val errorCode = getErrorCode(t)
                 Resource.Error(
-                    errorJson,
+                    "{$errorJson (Swipe to refresh)}",
                     null,
                     errorCode = errorCode
                 )
@@ -51,9 +51,12 @@ object ExceptionParser {
         return try {
             if (errorBody != null) {
                 val type: Type = object : TypeToken<ErrorModel>() {}.type
-                val dynamicResponse: ErrorModel =
+                val errorModel: ErrorModel =
                     gson.fromJson(errorBody.charStream(), type)
-                if (dynamicResponse.message?.isNotBlank() == true) Gson().toJson(dynamicResponse) else SOMETHING_WENT_WRONG
+                if (errorModel.message?.isNotBlank() == true)
+                    errorModel.message
+                else
+                    SOMETHING_WENT_WRONG
             } else {
                 SOMETHING_WENT_WRONG
             }

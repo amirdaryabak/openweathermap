@@ -42,6 +42,7 @@ class WeatherDetailFragment : BaseFragment(R.layout.fragment_weather_details) {
 
         binding.apply {
             args.day.let {
+                cityName.text = args.dayName
                 temp.text = "${it.weatherList[0].main}"
                 rainPercentage.text = "${it.rain.toInt()}%"
                 tempMin.text = "${it.temp.min.toInt()}°C"
@@ -51,18 +52,6 @@ class WeatherDetailFragment : BaseFragment(R.layout.fragment_weather_details) {
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            binding.apply {
-                viewModel.tasksEvent.collect { event ->
-                    when (event) {
-                        is WeatherDetailsViewModel.HandleEvent.GetWeatherByCoordinates -> TODO()
-                        is WeatherDetailsViewModel.HandleEvent.OnGetWeatherByCoordinatesError -> TODO()
-                        is WeatherDetailsViewModel.HandleEvent.OnGetWeatherByCoordinatesSuccess -> TODO()
-                        WeatherDetailsViewModel.HandleEvent.ShowLoading -> TODO()
-                    }.exhaustive
-                }
-            }
-        }
     }
 
     override fun onDestroyView() {

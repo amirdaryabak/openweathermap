@@ -10,7 +10,7 @@ import ir.amirdaryabak.openweathermap.feature_home.domain.entity.geographic_dail
 
 class DailyWeatherAdapter(
     private val weekDaysName: List<String>,
-    private val clickListener: (DailyEntity, Int) -> Unit,
+    private val clickListener: (DailyEntity, String) -> Unit,
 ) : ListAdapter<DailyEntity, DailyWeatherAdapter.MyViewHolder>(DiffCallback()) {
 
     init {
@@ -45,7 +45,7 @@ class DailyWeatherAdapter(
                     tempMax.text = "${it.temp.max.toInt()}°C/"
                 }
                 root.setOnClickListener {
-                    clickListener.invoke(dailyEntity, adapterPosition)
+                    clickListener.invoke(dailyEntity, weekDaysName[adapterPosition])
                 }
             }
 

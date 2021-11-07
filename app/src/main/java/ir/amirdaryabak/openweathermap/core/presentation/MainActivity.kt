@@ -11,6 +11,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ir.amirdaryabak.openweathermap.R
 import ir.amirdaryabak.openweathermap.core.utils.networkCapabilities.ConnectionLiveData
 import ir.amirdaryabak.openweathermap.databinding.ActivityMainBinding
+import ir.amirdaryabak.openweathermap.feature_home.presentation.HomeFragment
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
